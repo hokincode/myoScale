@@ -11,7 +11,7 @@ def simulate_skeleton():
     renderer = mujoco.Renderer(model) # create renderer
     trace = Motion_Trace("Motion Trajectories") # create trace
     for i in range(1000): # Simulate and save data
-        group_key = 'Frgit ame_' + str(i)
+        group_key = 'Frame_' + str(i)
         trace.create_group(group_key)
         mujoco.mj_step(model, data)
         renderer.update_scene(data)
