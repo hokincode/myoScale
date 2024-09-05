@@ -6,18 +6,24 @@ import cv2
 import numpy as np
 
 def simulate_skeleton():
+    # enable joint visualization option:
+    duration = 3.8  # (seconds)
+    framerate = 60  # (Hz)
+    # Simulate and display video.
+    frames = []
     model = mujoco.MjModel.from_xml_path('./myosuite/simhive/myo_model/myoskeleton/myoskeleton.xml') # create model
     data = mujoco.MjData(model)
     renderer = mujoco.Renderer(model) # create renderer
     trace = Motion_Trace("Motion Trajectories") # create trace
-    for i in range(1000): # Simulate and save data
-        group_key = 'Frame_' + str(i)
+    while data.time < duration: # Simulate and save data
+        group_key = 'Frame_' + str(data.time)
         trace.create_group(group_key)
         mujoco.mj_step(model, data)
-        renderer.update_scene(data)
-        datum_dict = dict(
-            image=renderer.render()
-        )
+        if len(frames) < data.time * framerate:
+            renderer.update_scene(data)
+            datum_dict = dict(
+                image=renderer.render()
+            )
         trace.append_datums(group_key=group_key, dataset_key_val=datum_dict)
     trace.save('myo_skeleton_simulation_output.h5', verify_length=True)
 
