@@ -31,21 +31,24 @@ def simulate_skeleton():
     trace.save('myo_skeleton_simulation_output.h5', verify_length=True)
 
 def motion2video():
+
+    # video setting
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Change to 'mp4v' codec for MP4 format
+    out = cv2.VideoWriter('output_video.mp4', fourcc, 300.0, (320, 240))  # Change the file extension to .mp4
+
+    # h5 file setting
     h5 = h5py.File('myo_skeleton_simulation_output.h5', 'r')
-    # List all frames available in the file
+
+    # iterate over the data
     frames = list(h5.keys())
     # Loop through each trial and display its contents
-    for frames in frames:
-        frame_data = h5[frames]
+    for frame in frames:
+        frame_data = h5[frame]
         image = frame_data['image']
         pixels_array = image[0]
-        print('time:', type(pixels_array))
-        print(pixels_array.shape)
-        # Display the image using OpenCV
-        cv2.imshow('Image', pixels_array)
-        # Save the image to a file
-
+        out.write(pixels_array)
     h5.close()
+    out.release()
 
 if __name__ == "__main__":
     simulate_skeleton()
